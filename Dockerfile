@@ -18,7 +18,8 @@ WORKDIR /src
 COPY go.mod go.sum ./
 
 # ✅ فرمت صحیح Railway: id=s/<service-id>-<target-path>
-RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod go mod download
+# 🟢 <service-id> را با شناسه سرویس واقعی خود جایگزین کنید
+RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod go mod download
 
 COPY cmd/ ./cmd/
 COPY deploy/ ./deploy/
@@ -37,8 +38,8 @@ ARG VCS_TREE_STATE=unknown
 ARG BUILD_DATE=unknown
 
 # ✅ فرمت صحیح Railway
-RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod \
-    --mount=type=cache,id=s/<service-id>-/root/.cache/go-build,target=/root/.cache/go-build \
+RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod \
+    --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     go build -trimpath \
@@ -55,13 +56,13 @@ RUN apk add --no-cache nodejs npm
 WORKDIR /src/cmd/telesrv-admin/web
 
 # ✅ فرمت صحیح Railway
-RUN --mount=type=cache,id=s/<service-id>-/root/.npm,target=/root/.npm npm ci && npm run build
+RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.npm,target=/root/.npm npm ci && npm run build
 
 WORKDIR /src
 
 # ✅ فرمت صحیح Railway
-RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod \
-    --mount=type=cache,id=s/<service-id>-/root/.cache/go-build,target=/root/.cache/go-build \
+RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod \
+    --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath -ldflags="-s -w" -o /out/telesrv-admin ./cmd/telesrv-admin
 
