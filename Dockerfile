@@ -17,8 +17,7 @@ WORKDIR /src
 
 COPY go.mod go.sum ./
 
-# ✅ فرمت صحیح Railway: id=s/<service-id>-<target-path>
-# 🟢 <service-id> را با شناسه سرویس واقعی خود جایگزین کنید
+# ✅ شناسه سرویس به صورت هاردکد شده وارد شده است
 RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod go mod download
 
 COPY cmd/ ./cmd/
@@ -37,7 +36,7 @@ ARG VCS_BRANCH=unknown
 ARG VCS_TREE_STATE=unknown
 ARG BUILD_DATE=unknown
 
-# ✅ فرمت صحیح Railway
+# ✅ شناسه سرویس به صورت هاردکد شده وارد شده است
 RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod \
     --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} \
@@ -55,12 +54,12 @@ RUN apk add --no-cache nodejs npm
 
 WORKDIR /src/cmd/telesrv-admin/web
 
-# ✅ فرمت صحیح Railway
+# ✅ شناسه سرویس به صورت هاردکد شده وارد شده است
 RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.npm,target=/root/.npm npm ci && npm run build
 
 WORKDIR /src
 
-# ✅ فرمت صحیح Railway
+# ✅ شناسه سرویس به صورت هاردکد شده وارد شده است
 RUN --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/go/pkg/mod,target=/go/pkg/mod \
     --mount=type=cache,id=s/a82861b9-30b3-4a7f-b8d0-e3136f43c7af-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
