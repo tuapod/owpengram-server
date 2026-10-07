@@ -17,8 +17,8 @@ WORKDIR /src
 
 COPY go.mod go.sum ./
 
-# ✅ اصلاح شد: اضافه کردن id=gomod به دستور کش
-RUN --mount=type=cache,id=gomod,target=/go/pkg/mod go mod download
+# ✅ فرمت صحیح Railway: id=s/<service-id>-<target-path>
+RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod go mod download
 
 COPY cmd/ ./cmd/
 COPY deploy/ ./deploy/
@@ -36,9 +36,9 @@ ARG VCS_BRANCH=unknown
 ARG VCS_TREE_STATE=unknown
 ARG BUILD_DATE=unknown
 
-# ✅ اصلاح شد: اضافه کردن id=gomod و id=gobuild
-RUN --mount=type=cache,id=gomod,target=/go/pkg/mod \
-    --mount=type=cache,id=gobuild,target=/root/.cache/go-build \
+# ✅ فرمت صحیح Railway
+RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod \
+    --mount=type=cache,id=s/<service-id>-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} \
     GOARCH=${TARGETARCH} \
     go build -trimpath \
@@ -54,14 +54,14 @@ RUN apk add --no-cache nodejs npm
 
 WORKDIR /src/cmd/telesrv-admin/web
 
-# ✅ اصلاح شد: اضافه کردن id=npm به دستور کش
-RUN --mount=type=cache,id=npm,target=/root/.npm npm ci && npm run build
+# ✅ فرمت صحیح Railway
+RUN --mount=type=cache,id=s/<service-id>-/root/.npm,target=/root/.npm npm ci && npm run build
 
 WORKDIR /src
 
-# ✅ اصلاح شد: اضافه کردن id=gomod و id=gobuild
-RUN --mount=type=cache,id=gomod,target=/go/pkg/mod \
-    --mount=type=cache,id=gobuild,target=/root/.cache/go-build \
+# ✅ فرمت صحیح Railway
+RUN --mount=type=cache,id=s/<service-id>-/go/pkg/mod,target=/go/pkg/mod \
+    --mount=type=cache,id=s/<service-id>-/root/.cache/go-build,target=/root/.cache/go-build \
     GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath -ldflags="-s -w" -o /out/telesrv-admin ./cmd/telesrv-admin
 
@@ -76,7 +76,6 @@ WORKDIR /app
 
 COPY --from=build-server /out/telesrv /app/telesrv
 COPY --from=build-admin /out/telesrv-admin /app/telesrv-admin
-# کپی کردن فایل‌های استاتیک ادمین (در صورت نیاز)
 COPY --from=build-admin /src/cmd/telesrv-admin/web/dist /app/web
 
 EXPOSE 8080
